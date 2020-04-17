@@ -37,6 +37,10 @@ $router->GET('/raiz/{id}', 'ClienteController@getRaiz');
 
 $router->GET('/archivos/{id}', 'ClienteController@getArchivos');
 
+// prueba de endpoint
+
+$router->POST('/cliente/files/carga', ['uses' => 'ClienteController@postCarga']);
+
 
 
 

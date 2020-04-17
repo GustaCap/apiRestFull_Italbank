@@ -178,5 +178,53 @@ class ClienteController extends Controller
     }
 
 
+    public function postCarga(Request $request)
+    {
+        
+        $this->validate($request, [
+
+            'files.*' => 'required|mimes:doc,docx,pdf,txt,png,jpg,jpeg,csv,gif|max:2048'
+        ]);
+
+        if ($request->hasfile('files')) {
+
+
+            $file = $request->file('files');
+
+            $cliente_id = $request->id;
+
+            $nombre = $file->getClientOriginalName();
+            $nombreimage = date('Y-m-d').'_'.$cliente_id.'_'.$nombre;
+
+            // /**
+            //  * La raiz debe venir en el POST del cliente
+            //  */
+            $carpeta = $request->carpeta;
+
+            // /**
+            //  * La función public_path() => api-italdoc/public/
+            //  */
+            $ruta = public_path().'/'.$carpeta;
+
+            $file->move($ruta, $nombreimage);
+        }
+
+        $rutaFinal = '/'.$carpeta.'/'.$nombreimage;
+       
+        $data = Archivo::create([
+
+            'cliente_id' => $cliente_id,
+            'files' =>  $rutaFinal
+
+            ]);
+
+        $data->save();
+        $cliente = Cliente::with('archivos')->get();
+
+        return response()->json($cliente, 200);
+      
+    }
+
+
 
 }
